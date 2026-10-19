@@ -678,15 +678,17 @@ def _draw_construction(host, pygame, screen):
                 pygame.draw.line(screen, C_GRID, (row.x, row.y),
                                  (row.right, row.y))
 
-            # Tech badge
+            # Tech badge (only when the server supplies a tier)
+            has_tech = bool(str(bp.get("tech", "")).strip())
             badge = pygame.Rect(row.x + S(8), row.y + (row.h - S(22)) // 2,
                                 S(34), S(22))
-            pygame.draw.rect(screen, C_BG, badge)
-            pygame.draw.rect(screen, C_STEEL, badge, 1)
-            bl = IF(10, bold=True).render(
-                _tech_label(bp.get("tech", "")), True, C_ACCENT)
-            screen.blit(bl, (badge.x + (badge.w - bl.get_width()) // 2,
-                             badge.y + (badge.h - bl.get_height()) // 2))
+            if has_tech:
+                pygame.draw.rect(screen, C_BG, badge)
+                pygame.draw.rect(screen, C_STEEL, badge, 1)
+                bl = IF(10, bold=True).render(
+                    _tech_label(bp.get("tech", "")), True, C_ACCENT)
+                screen.blit(bl, (badge.x + (badge.w - bl.get_width()) // 2,
+                                 badge.y + (badge.h - bl.get_height()) // 2))
 
             uses = bp.get("uses_remaining", bp.get("uses", None))
             unlimited = uses is None or uses == -1
@@ -719,7 +721,7 @@ def _draw_construction(host, pygame, screen):
             screen.blit(us, (u_x, row.y + (row.h - us.get_height()) // 2))
 
             # Name + cost summary
-            text_x = badge.right + S(10)
+            text_x = (badge.right + S(10)) if has_tech else (row.x + S(12))
             is_child = bool(bp.get("child", False))
             if is_child:
                 text_x += S(10)
@@ -742,9 +744,10 @@ def _draw_construction(host, pygame, screen):
         host._ps_cb_bp_scroll, bp_max, bp_total, bp_vis, BP_ROW_H,
         SB_W, S, C_BG, C_ACCENT, C_STEEL, C_VALUE, mx, my)
 
-    hint = F(10).render(
-        "Click a blueprint for full costs   |   Right-click for more build "
-        "options   |   Hover a job for its requirements", True, C_DIM)
+    hint_f = F(10)
+    hint = hint_f.render(_fit_text(
+        hint_f, "Click a blueprint: full costs  |  Right-click: more build "
+        "options  |  Hover a job: requirements", W), True, C_DIM)
     screen.blit(hint, (x0, list_rect.bottom + S(3)))
 
     # ── Blueprint popup ──────────────────────────────────────────────────

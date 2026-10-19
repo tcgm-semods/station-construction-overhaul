@@ -3,7 +3,7 @@
     "format": "star-empire-mod",
     "mod_id": "station-construction-overhaul",
     "name": "Station Construction Overhaul",
-    "version": "0.1.1",
+    "version": "0.1.2",
     "author": "wkthedev",
     "description": "Rebuilds the player-station Construction tab: live progress bars with percent and ETA, one-click BUILD buttons, inline Pause/Cancel, tech filters and cost summaries.",
     "loader_api": 2,
